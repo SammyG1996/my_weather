@@ -9,7 +9,7 @@ from forms import LoginForm, AddRegisterForm
 from models import User, FavoriteLocations
 from flask_bcrypt import Bcrypt
 from forcast import weather_api, ExtractWeatherData
-
+import os
 
 # this will initiate the app
 app = Flask(__name__)
@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///weather'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
-app.config['SECRET_KEY'] = secret_key
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secret_key)
 
 # This contains the debug toolbar
 # debug = DebugToolbarExtension(app)
