@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+
+<div class="col-1 col-md-2"></div>
+
+<div class="col-10 col-md-8 justify-content-center mt-5 mb-5 flex-column d-flex">
+
+  {% for weather_data in arr %}
+  
+  <h1>{{weather_data.location()}}</h1>
+
+  <div class="card mt-3 mb-3" style="max-width: 1920px;">
+    <div class="row g-0">
+      <div class="col-md-1">
+        <img src={{weather_data.weather_icon_url()}} class="img-fluid rounded-start m-2" alt="weather icon">
+      </div>
+      <div class="col-md-11">
+        <div class="card-body">
+          <h5 class="card-title">{{weather_data.temperature()}}&#8457</h5>
+          <h6 class="card-title">{{weather_data.current_condition()}}</h6>
+          <p class="card-text">It feels like {{weather_data.feels_like()}}&#8457</p>
+          {% if session.get('username') != None %}
+          <div class="d-flex">
+            <form action="/search" method="POST">
+              <input type="hidden" id='address' name="address" value="{{weather_data.location()}}">
+              <button type="submit" class="btn btn-info m-1">More Details</button>
+            </form>
+            <form action="/delete_location" method="POST">
+              <input type="hidden" id='city' name="city" value="{{weather_data.city()}}">
+              <input type="hidden" id='state' name="state" value="{{weather_data.state()}}">
+              <button type="submit" class="btn btn-warning m-1">Delete</button>
+            </form>
+          </div>
+
+          {% endif %}
+          <p class="card-text"><small class="text-muted">Last updated: {{weather_data.last_updated()}}</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  {% endfor %}
+
+</div>
+
+<div class="col-1 col-md-2"></div>
+
+</div>
+{% endblock %}

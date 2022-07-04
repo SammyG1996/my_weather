@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="row">
+
+  <div class="col-1 col-md-3"></div>
+
+  <div class="col-10 col-md-6 justify-content-center flex-column d-flex">
+    
+    <div class="row d-flex justify-content-center mt-4 mb-4 bg-light p-1 rounded">
+      <h1 class="text-dark"> Change Info</h1>
+      <form action="/account" method="POST">
+        {{ form.hidden_tag()}} <!--add type=hidden form fields -->
+        <div class="mb-3 d-flex flex-column">
+        
+      
+        <input id="username" type="hidden" name="username" required type="text" value="{{username}}">
+        <label for="password" class="mt-2 mb-1">Password:</label>
+        <input id="password" name="password" required type="password" value="">
+        <label for="email" class="mt-2 mb-1">Email:</label>
+        <input id="email" name="email" required type="text" value="{{email}}">
+        <label for="first_name" class="mt-2 mb-1">First Name:</label>
+        <input id="first_name" name="first_name" required type="text" value="{{first_name}}">
+        <label for="last_name" class="mt-2 mb-1">Last Name:</label>
+        <input id="last_name" name="last_name" required type="text" value="{{last_name}}">
+        <label for="home_city" class="mt-2 mb-1">Home City:</label>
+        <input id="home_city" name="home_city" required type="text" value="{{home_city}}">
+        <label for="home_state" class="mt-2 mb-1">Home State:</label>
+        <input id="home_state" maxlength="2" name="home_state" required type="text" value="{{home_state}}">
+        <label for="home_zip" class="mt-2 mb-1">Home Zip:</label>
+        <input id="home_zip" name="home_zip" required type="text" value="{{home_zip}}">
+        
+        
+      </div>
+        <button type="submit" class="btn btn-success">submit</button>
+      </form>
+    </div>
+  
+
+  </div>
+
+  <div class="col-1 col-md-3"></div>
+
+</div>
+
+{% endblock %}
