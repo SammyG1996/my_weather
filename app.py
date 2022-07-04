@@ -1,10 +1,4 @@
 '''bycrypt Application'''
-
-from array import array
-from crypt import methods
-from dataclasses import dataclass
-from distutils.log import Log
-import weakref
 from flask import Flask, redirect, render_template, request, session
 from sqlalchemy import delete
 from secret import secret_key
@@ -14,7 +8,6 @@ from datetime import date
 from forms import LoginForm, AddRegisterForm
 from models import User, FavoriteLocations
 from flask_bcrypt import Bcrypt
-import requests
 from forcast import weather_api, ExtractWeatherData
 
 
@@ -143,32 +136,13 @@ def register():
     home_state = form.home_state.data
     home_zip = form.home_zip.data
 
+
+
   
     # If youre not signed in the following code will run
     if session.get('username') == None:
 
-        user = User.register(username, password, first_name, last_name, email, home_city, home_state, home_zip)
-
-        db.session.commit()
-
-        favorite_location = FavoriteLocations.add_location(home_city, home_state, username)
-
-        db.session.commit()
-
-        session['flash'] = False
-        session['flash_msg'] = ''
-        session['username'] = user.username
-        session['first_name'] = user.first_name
-        session['last_name'] = user.last_name
-        session['locations'] = []
-        session['home_city'] = user.home_city
-        session['home_state'] = user.home_state
-        session['home_zip'] = user.home_zip
-        session['email'] = user.email
-        return redirect('/')
-
-    elif session.get('username' != None):
-      user = User.update(session['username'], password, first_name, last_name, email, home_city, home_state, home_zip)
+      user = User.register(username, password, first_name, last_name, email, home_city, home_state, home_zip)
 
       db.session.commit()
 
@@ -182,11 +156,11 @@ def register():
       session['home_state'] = user.home_state
       session['home_zip'] = user.home_zip
       session['email'] = user.email
-      
-      
-      return redirect('/account')
+      return redirect('/')
 
-    
+    else:
+      return render_template('register.html', form = form)
+
   else:
     return render_template('register.html', form = form, )
 
@@ -333,20 +307,17 @@ def account():
     home_zip = form.home_zip.data
 
     user = User.update(session['username'], password, first_name, last_name, email, home_city, home_state, home_zip)
-    print('success')
-    db.session.commit()
 
     session['flash'] = False
     session['flash_msg'] = ''
     session['username'] = user.username
     session['first_name'] = user.first_name
     session['last_name'] = user.last_name
-    session['locations'] = []
     session['home_city'] = user.home_city
     session['home_state'] = user.home_state
     session['home_zip'] = user.home_zip
     session['email'] = user.email
-  
+
     return redirect('/account')
 
 
@@ -380,7 +351,7 @@ def delete_location():
       arr.append(f"{location.city} {location.state}")
 
     session['locations'] = arr
-
+    
     return redirect('/saved_location')
   else:
     return redirect('/')
