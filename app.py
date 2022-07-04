@@ -1,4 +1,4 @@
-'''bycrypt Application'''
+'''My Weather Application'''
 from flask import Flask, redirect, render_template, request, session
 from sqlalchemy import delete
 from secret import secret_key
@@ -11,7 +11,7 @@ from flask_bcrypt import Bcrypt
 from forcast import weather_api, ExtractWeatherData
 
 
-# this is initiate the app
+# this will initiate the app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///weather'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,7 +22,7 @@ app.config['SECRET_KEY'] = secret_key
 # This contains the debug toolbar
 # debug = DebugToolbarExtension(app)
 
-
+# This will initialiez the encryption for passwords
 bcrypt = Bcrypt()
 
 
@@ -32,9 +32,22 @@ connect_db(app)
 # This will get todays date
 todays_date = date.today() 
 
+
+
+
+
+
+
+
+
 @app.route('/')
 def homepage():
-  '''This will contain all the pets that are currently posted on the application'''
+  '''
+  This will show the users home location when logged in, or it will show a prompt to login or register if not logged in
+  However uses can still choose to search without being logged in
+  '''
+
+  # Below will initialize all the sessions that will be used in the application
   if session.get('username') is None:
     session['username'] = None
 
@@ -74,25 +87,37 @@ def homepage():
     session['search_results'] = results
     return redirect('/weather_search')
 
-
-
   return render_template('home.html', first_name = session.get('first_name'), last_name = session.get('last_name'), username = session.get('username'), todays_date = todays_date)
   
 
 
+
+
+
+
+
+
+
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+
+  '''
+  This will allow the user to access the login form and then redirect them to the homepage. 
+  If the user is already looged in they will be redirected to the homepage
+  '''
   form = LoginForm()
 
+  # This will run if the form is validated
   if form.validate_on_submit():
+    # First we get the username and password from the DB
     username = User.query.get(form.username.data)
     stored_pw = form.password.data
-    
-    # Check to see if username and PW 
-    # Match the DB and then redirect to secrets
 
-    # bcrypt.check_password_hash(username.password, form.password.data)
+    # Then we compare the username and PW that was entered into the form with what is on the DB
 
+    # If there is a match the user will get logged in by adding all the users non sensitive data into the session storage
     if username != None and bcrypt.check_password_hash(username.password, stored_pw):
       fav_locations = FavoriteLocations.query.filter_by(username = username.username).all()
       arr = []
@@ -111,20 +136,34 @@ def login():
       session['email'] = username.email
 
       return redirect('/')
+    
+    # If there are not validated a message will be flashed telling them that their username or pw is wrong
     else:
-      # ADD A Flask Flash Method
       session['flash'] = True
       session['flash_msg'] = 'Incorrect Username or Password. Please Try again.'
       return render_template('login.html', form = form, session = session)
+  
+  # if the form doesnt validate and there is a username in the session storage then they will be redirected to the homepage
   elif session['username'] != None:
     return redirect("/")
+  # Else they will be sent to the login page again
   else:
     return render_template('login.html', form = form, session = session)
 
 
+
+
+
+
+
+
+
+
+
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-  '''This will contain all the pets that are currently posted on the application'''
+  '''This will allow the user to register if they are not already registered'''
   form = AddRegisterForm()
   if form.validate_on_submit():
     username = form.username.data
@@ -142,10 +181,21 @@ def register():
     # If youre not signed in the following code will run
     if session.get('username') == None:
 
+      # First we query the DB to see if the username is already in there
+      check_user = User.query.get(form.username.data)
+
+      # If the username exist we flash a message and redirect to the login page
+      if check_user != None: 
+        session['flash'] = True
+        session['flash_msg'] = 'User already exists'
+        return redirect('/login')
+
+      # If the user doesnt exist then the following code will run registering the user and saving them to the DB
       user = User.register(username, password, first_name, last_name, email, home_city, home_state, home_zip)
 
       db.session.commit()
 
+      # All the non sensitive data will be saved to session storage
       session['flash'] = False
       session['flash_msg'] = ''
       session['username'] = user.username
@@ -158,35 +208,69 @@ def register():
       session['email'] = user.email
       return redirect('/')
 
+    # if the user is logged in then they will be redirected to the homepage 
     else:
-      return render_template('register.html', form = form)
+      return redirect('/')
 
+  # If the form doesnt validate they will be sent to the register page again
   else:
     return render_template('register.html', form = form, )
 
 
 
 
-# This will let you log out
+
+
+
+
+
+
+
+
+
 @app.route("/logout")
 def logout():
-    """Logout route."""
-    if "username" in session:
-      session.pop("username")
-      session.pop('first_name')
-      session.pop('last_name')
-      session['locations'].clear()
-      session.pop('home_city')
-      session.pop('home_state')
-      session.pop('home_zip')
-      session.pop('email')
-      session['flash'] = False
-      session['flash_msg'] = ''
-      
-    return redirect("/")
+  '''This will log the user out by clearing out everything in the session storage'''
+  if "username" in session:
+    session.pop("username")
+    session.pop('first_name')
+    session.pop('last_name')
+    session['locations'].clear()
+    session.pop('home_city')
+    session.pop('home_state')
+    session.pop('home_zip')
+    session.pop('email')
+    session['flash'] = False
+    session['flash_msg'] = ''
+    
+  return redirect("/")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.route('/search', methods=['POST'])
 def search():
+  '''
+  This will be the route that the search form submits to.
+  It will either result in a redirect to the homepage if the form is submitted with nothing, 
+  or it will make an API request with the submitted data. 
+
+  If the data comes back with with valid data the user will be redirected to the '/weather_search' and the results from 
+  the API will be saved in the session storage. 
+
+  If the API comes back with None then a message will flash to the user saying to enter a valid address
+  '''
   address = request.form['address']
   if address == '':
     session['flash'] = False
@@ -208,17 +292,33 @@ def search():
     return redirect('/')
 
 
+
+
+
+
+
+
+
+
+
+
 @app.route('/weather_search')
 def searched_weather():
+  '''This route will check the search results from the API that is stored in the session storage a redirect or render accordingly'''
+
+  # if there is nothing stored in the session storage then the user is redirected home
   if session['search_results'] == None:
     return redirect('/')
   
+  # If there is something then the following code runs
   else:
-
+    # An empty array is created and a for loop goes through the search results in the session storage  
+    # to get the 3 day forecast info. The array is then passes as an argument to the jinja template
     arr = []
     for day in session['search_results']['forecast']['forecastday']:
       arr.append(day)
 
+    # The below code will then retrive the individual bits of info from the stored search results data
     weather_data = ExtractWeatherData(session.get('search_results'))
     location = weather_data.location()
     icon = weather_data.weather_icon_url()
@@ -262,8 +362,22 @@ def searched_weather():
 
 
 
+
+
+
+
+
+
+
+
+
+
 @app.route('/favorite_locations/<city>/<state>')
 def favorite_locations(city, state):
+  '''
+  If the user is logged in then the follwoing code will save the submitted location to 
+  the favorite locations DB. 
+  '''
   if session.get('username') != None and f"{city} {state}" not in session.get('locations'):
     session['locations'] = [*session['locations'], f"{city} {state}"]
     add_fav_location = FavoriteLocations().add_location(city, state, session['username'])
@@ -274,9 +388,19 @@ def favorite_locations(city, state):
 
 
 
+
+
+
+
+
+
+
+
 @app.route('/saved_location')
 def saved_locations():
-  
+  '''
+  This route will show all of the saved favorite locations if the user is logged in
+  '''
   if session.get('username') != None:
     arr = []
     for location in session['locations']:
@@ -294,10 +418,18 @@ def saved_locations():
 
 @app.route('/account', methods=["GET", 'POST'])
 def account():
+  '''
+  This route will show the accout information and allow you to edit it. 
 
+  There is also a POST method to then save the new information to the DB
+  '''
+
+  # This will instantiate the form
   form = AddRegisterForm()
   
+  # If the form validates the following will run as a POST request
   if form.validate_on_submit():
+    # All of the data from the form will be extracted
     password = form.password.data
     email = form.email.data
     first_name = form.first_name.data
@@ -306,6 +438,7 @@ def account():
     home_state = form.home_state.data
     home_zip = form.home_zip.data
 
+    # A function will then update the DB with the new information and update the session storage
     user = User.update(session['username'], password, first_name, last_name, email, home_city, home_state, home_zip)
 
     session['flash'] = False
@@ -318,9 +451,11 @@ def account():
     session['home_zip'] = user.home_zip
     session['email'] = user.email
 
+    db.session.commit()
+
     return redirect('/account')
 
-
+  # This will then handle the GET request and return the form with the acct info to update
   elif session.get('username') != None: 
 
     return render_template('account.html', 
@@ -332,7 +467,7 @@ def account():
     home_city = session['home_city'], 
     home_state = session['home_state'], 
     home_zip = session['home_zip'])
-    
+  # However is the user is not logged in then they will just be redirected to the homepage
   else: 
     return redirect('/')
 
@@ -340,18 +475,20 @@ def account():
 
 @app.route('/delete_location', methods=["POST"])
 def delete_location():
+  '''This will handle removing a location from your favorites list.'''
   resp_city = request.form['city']
+  # If the user is logged in we retrive the city to delete from the DB and remove it
   if session.get('username') != None: 
     FavoriteLocations.query.filter_by(username = session['username']).filter_by(city = resp_city).delete()
     db.session.commit()
-
+    # Then we retrive the refreshed list from the DB and reassign it to the session storage
     fav_locations = FavoriteLocations.query.filter_by(username = session['username']).all()
     arr = []
     for location in fav_locations:
       arr.append(f"{location.city} {location.state}")
 
     session['locations'] = arr
-    
+
     return redirect('/saved_location')
   else:
     return redirect('/')
