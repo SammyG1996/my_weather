@@ -26,12 +26,12 @@
           <div class="d-flex">
             <form action="/search" method="POST">
               <input type="hidden" id='address' name="address" value="{{weather_data.location()}}">
-              <button type="submit" class="btn btn-info m-1">More Details</button>
+              <button type="submit" class="btn btn-primary m-1">More Details</button>
             </form>
             <form action="/delete_location" method="POST">
               <input type="hidden" id='city' name="city" value="{{weather_data.city()}}">
               <input type="hidden" id='state' name="state" value="{{weather_data.state()}}">
-              <button type="submit" class="btn btn-warning m-1">Delete</button>
+              <button type="submit" class="btn btn-danger m-1">Delete</button>
             </form>
           </div>
 
