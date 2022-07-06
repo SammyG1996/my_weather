@@ -360,6 +360,7 @@ def searched_weather():
     sunset = weather_data.sunset_3day()[0]
     lat = weather_data.lat()
     lon = weather_data.lon()
+    country = weather_data.country()
 
     return render_template('weather_searched.html', 
     location = location, 
@@ -380,7 +381,8 @@ def searched_weather():
     sunset = sunset, 
     lat = lat, 
     lon = lon, 
-    arr = arr)
+    arr = arr, 
+    country = country)
 
 
 

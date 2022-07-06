@@ -8,9 +8,14 @@
 
 <div class="col-10 col-md-8 justify-content-center mt-5 mb-5 flex-column d-flex">
   
-  <h1>{{location}}</h1>
+  <h1 class="text-primary">{{city}}</h1>
+  <h2 class="text-primary">{{state}}</h2>
+  <h3 class="text-dark">{{country}}</h3>
 
-  <div class="card mt-3 mb-3" style="max-width: 1920px;">
+  <div class="card mt-5 mb-3" style="max-width: 1920px;">
+    <div class="card-header bg-primary">
+      <h6 class="text-light">Current Condition:</h6>
+    </div>
     <div class="row g-0">
       <div class="col-md-1">
         <img src={{icon}} class="img-fluid rounded-start m-2" alt="weather icon">
@@ -34,9 +39,11 @@
     <iframe src="https://www.rainviewer.com/map.html?loc={{lat}},{{lon}},6&oFa=0&oC=0&oU=0&oCS=1&oF=0&oAP=0&c=1&o=83&lm=1&layer=radar&sm=1&sn=1" width="100%" frameborder="0" style="border:0;height:50vh;" allowfullscreen></iframe>
 
     <div class="col-sm-6 mt-3 mb-3">
-      <div class="card" style="height: 30vh;">
+      <div class="card" style="height: 25vh;">
+        <div class="card-header bg-primary">
+          <h6 class="text-light">Sunrise / Sunset:</h6>
+        </div>
         <div class="card-body">
-          <h6 class="card-title">Sunrise / Sunset</h6>
           <p class="card-text">Sunrise is at {{sunrise}}</p>
           <p class="card-text">Sunset is at {{sunset}}</p>
         </div>
@@ -45,9 +52,11 @@
 
 
     <div class="col-sm-6 mt-3 mb-3">
-      <div class="card" style="height: 30vh;">
+      <div class="card" style="height: 25vh;">
+        <div class="card-header bg-primary">
+          <h6 class="text-light">Wind:</h6>
+        </div>
         <div class="card-body">
-          <h6 class="card-title">Wind</h6>
           <p class="card-text">Wind is {{wind_dirrection}} at {{wind_mph}} mph</p>
           <p class="card-text">Wind gust can be up to {{wind_gust}} mph</p>
         </div>
@@ -55,45 +64,53 @@
     </div>
 
     <div class="col-sm-4 mt-3 mb-3">
-      <div class="card" style="height: 30vh;">
+      <div class="card" style="height: 20vh;">
+        <div class="card-header bg-primary">
+          <h6 class="text-light">Precipitation:</h6>
+        </div>
         <div class="card-body">
-          <h6 class="card-title">Precipitation</h6>
           <p class="card-text">The estimated current precipitation is {{precipitation}} in.</p>
         </div>
       </div>
     </div>
     
     <div class="col-sm-4 mt-3 mb-3">
-      <div class="card" style="height: 30vh;">
+      <div class="card" style="height: 20vh;">
+        <div class="card-header bg-primary">
+          <h6 class="text-light">Humidity Index:</h6>
+        </div>
         <div class="card-body">
-          <h6 class="card-title">Humidity Index</h6>
           <p class="card-text">{{humidity}}</p>
         </div>
       </div>
     </div>
 
       <div class="col-sm-4 mt-3 mb-3">
-        <div class="card" style="height: 30vh;">
+        <div class="card" style="height: 20vh;">
+          <div class="card-header bg-primary">
+            <h6 class="text-light">UV Index:</h6>
+          </div>
           <div class="card-body">
-            <h6 class="card-title">UV Index</h6>
             <p class="card-text">{{uv}}</p>
           </div>
         </div>
       </div>
 
 
-      <h2 class="text-light mt-3 mb-3">3 Day Forecast</h2>
+      <h2 class="text-dark mt-3 mb-3">3 Day Forecast</h2>
 
       {% for day in arr %}
     
-        <div class="card mt-3 mb-3" style="max-width: 1920px;">
+        <div class="card mt-3 mb-3 p-0" style="max-width: 1920px;">
+          <div class="card-header bg-primary d-flex">
+            <h5 class="text-light">{{day['date']}}:</h5>
+          </div>
           <div class="row g-0">
             <div class="col-md-1">
               <img src="{{day['day']['condition']['icon']}}" class="img-fluid rounded-start" alt="weather icon">
             </div>
             <div class="col-md-11">
               <div class="card-body">
-                <h4 class="card-title">{{day['date']}}</h4>
                 <h5 class="card-title">Max temp: {{day['day']['maxtemp_f']}}&#8457</h5>
                 <h6 class="card-title">Min temp: {{day['day']['mintemp_f']}}&#8457</h6>
                 <p class="card-text">{{day['day']['condition']['text']}}</p>

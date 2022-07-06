@@ -80,6 +80,9 @@ class ExtractWeatherData:
   def state(self): 
     return f"{self.data['location']['region']}"
 
+  def country(self):
+    return f"{self.data['location']['country']}"
+
   def lat(self):
     return f"{self.data['location']['lat']}"
 
