@@ -1,6 +1,7 @@
 '''My Weather Application'''
 from cgi import print_environ_usage
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session, url_for
+import flask
 from sqlalchemy import delete
 from secret import secret_key
 from models import db, connect_db
@@ -84,10 +85,10 @@ def homepage():
     session['email'] = None
 
   
-  if session.get('username') != None: 
-    results = weather_api(f"{session['home_city']} {session['home_state']}")
-    session['search_results'] = results
-    return redirect('/weather_search')
+  # if session.get('username') != None: 
+  #   results = weather_api(f"{session['home_city']} {session['home_state']}")
+  #   session['search_results'] = results
+  #   return redirect('/weather_search')
     
 
 
@@ -244,8 +245,8 @@ def logout():
     session.pop('home_state')
     session.pop('home_zip')
     session.pop('email')
-    session['flash'] = False
-    session['flash_msg'] = ''
+    session['flash'] = True
+    session['flash_msg'] = 'Login or Register to save your favorite locations!'
     
   return redirect("/")
 
@@ -263,7 +264,7 @@ def logout():
 
 
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET', 'POST'])
 def search():
   '''
   This will be the route that the search form submits to.
@@ -275,33 +276,42 @@ def search():
 
   If the API comes back with None then a message will flash to the user saying to enter a valid address
   '''
-  address = request.form['address']
-  if address == '':
-    session['flash'] = False
-    session['flash_msg'] = ''
-    session['search_results'] = None
-    return redirect('/')
-  
-  data = weather_api(address)
-
-  if data.get('location') != None:
-    session['flash'] = False
-    session['flash_msg'] = ''
-    session['search_results'] = data
-    if session.get('username') == None:
-      session['flash'] = True
-      session['flash_msg'] = 'Login or Register to save your favorite locations!'
-    else:
+  if flask.request.method == 'POST':
+    address = request.form['address']
+    if address == '':
       session['flash'] = False
       session['flash_msg'] = ''
+      session['search_results'] = None
+      return redirect('/')
+    
+    data = weather_api(address)
+
+    if data.get('location') != None:
+      session['flash'] = False
+      session['flash_msg'] = ''
+      session['search_results'] = data
+      if session.get('username') == None:
+        session['flash'] = True
+        session['flash_msg'] = 'Login or Register to save your favorite locations!'
+      else:
+        session['flash'] = False
+        session['flash_msg'] = ''
 
 
-    return redirect('/weather_search')
-  else: 
-    session['flash'] = True
-    session['flash_msg'] = 'Please Enter a Valid Address or Zip Code'
-    session['search_results'] = None
-    return redirect('/')
+      return redirect('/weather_search')
+    else: 
+      session['flash'] = True
+      session['flash_msg'] = 'Please Enter a Valid Address or Zip Code'
+      session['search_results'] = None
+      return redirect('/')
+
+  else:
+    args = request.args
+    ip = args.to_dict().get('q')
+    data = weather_api(ip)
+    session['search_results'] = data
+    return data
+
 
 
 
