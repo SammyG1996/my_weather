@@ -329,7 +329,7 @@ def searched_weather():
   '''This route will check the search results from the API that is stored in the session storage a redirect or render accordingly'''
 
   # if there is nothing stored in the session storage then the user is redirected home
-  if session['search_results'] == None:
+  if session.get('search_results') == None:
     return redirect('/')
   
   # If there is something then the following code runs
