@@ -89,10 +89,6 @@ def homepage():
     session['search_results'] = results
     return redirect('/weather_search')
     
-  # else:
-  #   data = get_address_by_ip()
-  #   results = weather_api(data)
-  #   session['search_results'] = results
 
 
   return render_template('home.html', todays_date = todays_date)
@@ -292,6 +288,14 @@ def search():
     session['flash'] = False
     session['flash_msg'] = ''
     session['search_results'] = data
+    if session.get('username') == None:
+      session['flash'] = True
+      session['flash_msg'] = 'Login or Register to save your favorite locations!'
+    else:
+      session['flash'] = False
+      session['flash_msg'] = ''
+
+
     return redirect('/weather_search')
   else: 
     session['flash'] = True
