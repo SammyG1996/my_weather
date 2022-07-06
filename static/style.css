@@ -1,7 +1,9 @@
-body {
-  background-color: black;
-}
 
 h1 {
-  color: whitesmoke;
+  color: black;
+}
+
+
+body div {
+  border-radius: 0px;
 }

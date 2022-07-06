@@ -21,7 +21,7 @@
           <h6 class="card-title">{{current_condition}}</h6>
           <p class="card-text">It feels like {{feels_like}}&#8457</p>
           {% if session.get('username') != None %}
-          <a href="/favorite_locations/{{city}}/{{state}}" class="btn btn-info">Add to Favorite Locations</a>
+          <a href="/favorite_locations/{{city}}/{{state}}" class="btn btn-primary">Add to Favorite Locations</a>
           {% endif %}
           <p class="card-text"><small class="text-muted">Last updated: {{last_updated}}</small></p>
         </div>
