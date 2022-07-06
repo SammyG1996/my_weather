@@ -1,4 +1,5 @@
 '''My Weather Application'''
+from cgi import print_environ_usage
 from flask import Flask, redirect, render_template, request, session
 from sqlalchemy import delete
 from secret import secret_key
@@ -8,7 +9,7 @@ from datetime import date
 from forms import LoginForm, AddRegisterForm
 from models import User, FavoriteLocations
 from flask_bcrypt import Bcrypt
-from forcast import weather_api, ExtractWeatherData
+from forcast import weather_api, get_address_by_ip ,ExtractWeatherData
 import os
 
 # this will initiate the app
@@ -86,9 +87,14 @@ def homepage():
   if session.get('username') != None: 
     results = weather_api(f"{session['home_city']} {session['home_state']}")
     session['search_results'] = results
-    return redirect('/weather_search')
+    
+  else:
+    data = get_address_by_ip()
+    results = weather_api(data)
+    session['search_results'] = results
 
-  return render_template('home.html', first_name = session.get('first_name'), last_name = session.get('last_name'), username = session.get('username'), todays_date = todays_date)
+
+  return redirect('/weather_search')
   
 
 

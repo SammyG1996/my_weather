@@ -12,11 +12,16 @@ def weather_api(location):
           )
      # Converts the response into a Python Dictionay
      data = resp.json()
-     print(data)
 
      # This will return a Python Dictionary of the Data. I can then use this in
      # The following  functions to extract the data that I need
      return data
+
+def get_address_by_ip():
+    resp = requests.get("https://api.ipify.org?format=json")
+    data = resp.json()
+    return data['ip']
+
 
 class ExtractWeatherData:
   def __init__(self, data):
