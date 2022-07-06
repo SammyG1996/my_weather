@@ -1,6 +1,8 @@
 
 # Welcome to My Weather
 
+link to API: https://www.weatherapi.com/
+
 This is a brief description of what this project does and who it's for
 
 This app aims to look up the weather for your favorite destinations. You can either use the app without signing up or create an account and save your favorite locations for quick reference. You also set what your home location is, which will automatically show you the weather and other statistics as soon as you log in. 
