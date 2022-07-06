@@ -8,29 +8,15 @@
 
   <div class="col-10 col-md-6 justify-content-center flex-column d-flex">
 
-    {% if first_name != None and last_name != None %} 
-    <h1 class="mt-4 mb-4">Welcome {{first_name}} {{last_name}}</h1>
-    {% else %}
-    <h1 class="mt-4 mb-4">Welcome</h1>
-    {% endif %}
+    <form action="/search" method="post" id="hidden-form" class="mt-5">
+      <input type="hidden" id="hidden-address" name="address" value="">
+    </form>
 
-    {% if username != None %}
-
-    <h2>ADD CUSTOM WEATHER HERE</h2>
     
-    {% else %}
-    <div class="card">
-      <div class="card-header">
-        Today is: {{todays_date}}
-      </div>
-      <div class="card-body">
-        <h5 class="card-title">Please use the search bar in the menu to find your location</h5>
-        <p class="card-text">Or sign in to see your saved locations.</p>
-        <a href="/login" class="btn btn-primary">Sign In</a>
-        <a href="/register" class="btn btn-info">Register</a>
-      </div>
+    <div class="progress mt-5">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
     </div>
-    {% endif %}
+
   </div>
 
   <div class="col-1 col-md-3"></div>

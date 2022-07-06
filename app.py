@@ -87,14 +87,15 @@ def homepage():
   if session.get('username') != None: 
     results = weather_api(f"{session['home_city']} {session['home_state']}")
     session['search_results'] = results
+    return redirect('/weather_search')
     
-  else:
-    data = get_address_by_ip()
-    results = weather_api(data)
-    session['search_results'] = results
+  # else:
+  #   data = get_address_by_ip()
+  #   results = weather_api(data)
+  #   session['search_results'] = results
 
 
-  return redirect('/weather_search')
+  return render_template('home.html', todays_date = todays_date)
   
 
 
