@@ -3,6 +3,7 @@ from cgi import print_environ_usage
 from flask import Flask, redirect, render_template, request, session, url_for
 import flask
 from sqlalchemy import delete
+from urllib3 import Retry
 from secret import secret_key
 from models import db, connect_db
 from flask_debugtoolbar import DebugToolbarExtension
@@ -97,6 +98,14 @@ def homepage():
 
 
 
+@app.route('/home_weather')
+def home_weather():
+  if session.get('username') != None: 
+    results = weather_api(f"{session['home_city']} {session['home_state']}")
+    session['search_results'] = results
+    return redirect('/weather_search')
+  else:
+    return redirect('/')
 
 
 
@@ -140,7 +149,7 @@ def login():
       session['locations'] = arr
       session['email'] = username.email
 
-      return redirect('/')
+      return redirect('/home_weather')
     
     # If there are not validated a message will be flashed telling them that their username or pw is wrong
     else:
@@ -211,11 +220,11 @@ def register():
       session['home_state'] = user.home_state
       session['home_zip'] = user.home_zip
       session['email'] = user.email
-      return redirect('/')
+      return redirect('/home_weather')
 
     # if the user is logged in then they will be redirected to the homepage 
     else:
-      return redirect('/')
+      return redirect('/home_weather')
 
   # If the form doesnt validate they will be sent to the register page again
   else:
