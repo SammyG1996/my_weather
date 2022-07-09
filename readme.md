@@ -1,7 +1,9 @@
 
 # Welcome to My Weather
 
-link to API: https://www.weatherapi.com/
+link to weather API: https://api.weatherapi.com/v1/forecast.json
+
+Link to IP Address Lookup API: https://api.ipify.org?format=json
 
 This is a brief description of what this project does and who it's for
 

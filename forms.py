@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, TextAreaField, BooleanField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired, Length, Email
 from wtforms.widgets import PasswordInput
 
 
@@ -16,7 +16,7 @@ class AddRegisterForm(FlaskForm):
 
   username = StringField('Username', [InputRequired()])
   password = StringField('Password', widget=PasswordInput(hide_value=False), validators=[InputRequired()])
-  email = StringField('Email', validators=[InputRequired()])
+  email = StringField('Email', validators=[InputRequired(), Email()])
   first_name = StringField('First Name', validators=[InputRequired()])
   last_name = StringField('Last Name', validators=[InputRequired()])
   home_city = StringField('Home City', validators=[InputRequired()])
