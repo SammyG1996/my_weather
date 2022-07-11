@@ -85,13 +85,6 @@ def homepage():
   if session.get('email') is None:
     session['email'] = None
 
-  
-  # if session.get('username') != None: 
-  #   results = weather_api(f"{session['home_city']} {session['home_state']}")
-  #   session['search_results'] = results
-  #   return redirect('/weather_search')
-    
-
 
   return render_template('home.html', todays_date = todays_date)
   
@@ -103,6 +96,8 @@ def home_weather():
   if session.get('username') != None: 
     results = weather_api(f"{session['home_city']} {session['home_state']}")
     session['search_results'] = results
+    session['flash'] = False
+    session['flash_msg'] = ''
     return redirect('/weather_search')
   else:
     return redirect('/')
@@ -370,6 +365,8 @@ def searched_weather():
     lat = weather_data.lat()
     lon = weather_data.lon()
     country = weather_data.country()
+    session['flash'] = False
+    session['flash_msg'] = ''
 
     return render_template('weather_searched.html', 
     location = location, 
@@ -414,6 +411,8 @@ def favorite_locations(city, state):
   if session.get('username') != None and f"{city} {state}" not in session.get('locations'):
     session['locations'] = [*session['locations'], f"{city} {state}"]
     add_fav_location = FavoriteLocations().add_location(city, state, session['username'])
+    session['flash'] = True
+    session['flash_msg'] = 'Added Location to saved locations'
     db.session.commit()
 
   return redirect('/weather_search')
@@ -440,11 +439,15 @@ def saved_locations():
       data = weather_api(location)
       extract = ExtractWeatherData(data)
       arr.append(extract)
+      session['flash'] = False
+      session['flash_msg'] = ''
       
 
     return render_template('locations.html', arr = arr)
 
   else:
+    session['flash'] = False
+    session['flash_msg'] = ''
     return redirect('/')
 
 
@@ -483,6 +486,8 @@ def account():
     session['home_state'] = user.home_state
     session['home_zip'] = user.home_zip
     session['email'] = user.email
+    session['flash'] = True
+    session['flash_msg'] = 'Account Information Updated'
 
     db.session.commit()
 
@@ -500,6 +505,7 @@ def account():
     home_city = session['home_city'], 
     home_state = session['home_state'], 
     home_zip = session['home_zip'])
+    
   # However is the user is not logged in then they will just be redirected to the homepage
   else: 
     return redirect('/')
@@ -521,6 +527,8 @@ def delete_location():
       arr.append(f"{location.city} {location.state}")
 
     session['locations'] = arr
+    session['flash'] = True
+    session['flash_msg'] = 'Location Deleted'
 
     return redirect('/saved_location')
   else:
