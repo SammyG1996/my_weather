@@ -14,6 +14,8 @@ from flask_bcrypt import Bcrypt
 from forcast import weather_api, get_address_by_ip ,ExtractWeatherData
 import os
 
+
+
 # this will initiate the app
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://postgres:xIXhjC642d0EgTrdfmLW@containers-us-west-20.railway.app:6029/railway')
