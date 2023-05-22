@@ -24,4 +24,4 @@ This app was created as an effort to show my ability to create a full-stack, int
 •	Bootstraps      
 •	And more!      
 
-For a full list please see the requirments.txt file. Also, if you're going to run this application make sure to download all the dependencies from the requrements.txt file. Also, you need to create a new database to connect to. Enjoy the application!
+For a full list please see the requirments.txt file. Also, if you're going to run this application make sure to download all the dependencies from the requrements.txt file. Also, you need to create a new postgreSQL database to connect to. You will find the seed files needed to populate the database included in the files. Enjoy the application!
