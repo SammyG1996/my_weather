@@ -18,7 +18,7 @@ import os
 
 # this will initiate the app
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://myweather_user:jWPJ4jKTPNmJwD54uqR37zdFQzHwgVwc@dpg-chmd40ak728ntj8ngq00-a/myweather')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://myweather_user:jWPJ4jKTPNmJwD54uqR37zdFQzHwgVwc@dpg-chmd40ak728ntj8ngq00-a.oregon-postgres.render.com/myweather')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
